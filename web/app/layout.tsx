@@ -2,11 +2,12 @@ import { Geist_Mono, Inter } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils";
+import { CartProvider } from "@/hooks/use-cart"
+import { cn } from "@/lib/utils"
 
-const geistMonoHeading = Geist_Mono({subsets:['latin'],variable:'--font-heading'});
+const geistMonoHeading = Geist_Mono({ subsets: ["latin"], variable: "--font-heading" })
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'})
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -22,10 +23,18 @@ export default function RootLayout({
     <html
       lang="pt-MZ"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, "font-sans", inter.variable, geistMonoHeading.variable)}
+      className={cn(
+        "antialiased",
+        fontMono.variable,
+        "font-sans",
+        inter.variable,
+        geistMonoHeading.variable,
+      )}
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <CartProvider>{children}</CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
