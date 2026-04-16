@@ -1,0 +1,419 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+//////////////////////
+// ENUMS
+//////////////////////
+
+enum UserRole {
+  ADMIN
+  CLIENT
+  SUPPLIER
+  DRIVER
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum DriverStatus {
+  AVAILABLE
+  BUSY
+  OFFLINE
+}
+
+enum PricingUnit {
+  TON
+  CUBIC_METER
+}
+
+enum DeliveryType {
+  NORMAL
+  URGENT
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_TRANSIT
+  DELIVERED
+  CANCELLED
+}
+
+enum TruckStatus {
+  AVAILABLE
+  IN_USE
+  MAINTENANCE
+}
+
+enum PaymentMethod {
+  CARD
+  MOBILE_MONEY
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum EscrowStatus {
+  HELD
+  RELEASED
+}
+
+enum DeliveryStatus {
+  ASSIGNED
+  ACCEPTED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+}
+
+enum DisputeStatus {
+  OPEN
+  RESOLVED
+  REJECTED
+}
+
+enum NotifType {
+  ORDER_UPDATE
+  PAYMENT
+  DELIVERY
+}
+
+enum NotifChannel {
+  PUSH
+  SMS
+  EMAIL
+}
+
+enum DocType {
+  LICENSE
+  INSURANCE
+  OTHER
+}
+
+//////////////////////
+// MODELS
+//////////////////////
+
+model User {
+  id            String   @id @default(uuid())
+  phone         String?
+  email         String   @unique
+  passwordHash  String
+  role          UserRole
+  otpSecret     String?
+  status        AccountStatus
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  supplierProfile SupplierProfile?
+  driverProfile   DriverProfile?
+
+  clientOrders     Order[] @relation("ClientOrders")
+  reviews          Review[]
+  notifications    Notification[]
+  documents        Document[]
+
+  disputesRaised   Dispute[] @relation("DisputeRaisedBy")
+  disputesResolved Dispute[] @relation("DisputeResolvedBy")
+
+  updatedConfigs   SystemConfig[]
+}
+
+model SupplierProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  companyName      String
+  nuit             String?
+  latitude         Float?
+  longitude        Float?
+  deliveryRadiusKm Float?
+  bankAccountRef   String?
+  commissionRate   Float?
+  verifiedAt       DateTime?
+
+  user     User     @relation(fields: [userId], references: [id])
+  products Product[]
+  trucks   Truck[]
+  drivers  DriverProfile[]
+  orders   Order[]
+  reviews Review[] @relation("SupplierReviews")
+}
+
+model DriverProfile {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  supplierId      String?
+  licenseNumber   String
+  currentLocation Unsupported("point")
+  availability    DriverStatus
+  verifiedAt      DateTime?
+
+  user       User              @relation(fields: [userId], references: [id])
+  supplier   SupplierProfile? @relation(fields: [supplierId], references: [id])
+  deliveries Delivery[]
+  trucks     Truck[]          @relation("DriverTruck")
+  reviews Review[] @relation("DriverReviews")
+}
+model Category {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+}
+model Product {
+  id            String   @id @default(uuid())
+  supplierId    String
+  categoryId    String
+  name          String
+  unit          PricingUnit
+  pricePerUnit  Float
+  stockQuantity Float
+  minOrderQty   Float
+  photoUrls     String[]
+  isActive      Boolean  @default(true)
+  avgRating     Float?
+
+  supplier SupplierProfile @relation(fields: [supplierId], references: [id])
+  category Category        @relation(fields: [categoryId], references: [id])
+  orders   Order[]
+}
+
+model Order {
+  id                String   @id @default(uuid())
+  clientId          String
+  supplierId        String
+  productId         String
+  quantity          Float
+  unitPriceSnapshot Float
+  deliveryAddress   String
+  latitude         Float?
+  longitude        Float?
+  scheduledAt       DateTime
+  deliveryType      DeliveryType
+  status            OrderStatus
+  freightCost       Float
+  subtotal          Float
+  urgencySurcharge  Float
+  totalAmount       Float
+  isCod             Boolean
+  createdAt         DateTime @default(now())
+
+  client   User            @relation("ClientOrders", fields: [clientId], references: [id])
+  supplier SupplierProfile @relation(fields: [supplierId], references: [id])
+  product  Product         @relation(fields: [productId], references: [id])
+
+  payment  Payment?
+  delivery Delivery?
+  invoice  Invoice?
+
+  reviews  Review[]
+  disputes Dispute[]
+  history  OrderStatusHistory[]
+}
+
+model Truck {
+  id              String   @id @default(uuid())
+  supplierId      String
+  plateNumber     String
+  capacityTons    Float
+  status          TruckStatus
+  currentDriverId String?
+
+  supplier SupplierProfile @relation(fields: [supplierId], references: [id])
+  driver   DriverProfile?  @relation("DriverTruck", fields: [currentDriverId], references: [id])
+
+  documents Document[]
+  deliveries Delivery[]
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  orderId     String   @unique
+  method      PaymentMethod
+  status      PaymentStatus
+  amount      Float
+  currency    String   @default("MZN")
+  providerRef String   @unique
+  paidAt      DateTime?
+
+  order  Order         @relation(fields: [orderId], references: [id])
+  escrow EscrowLedger?
+}
+
+model EscrowLedger {
+  id               String   @id @default(uuid())
+  paymentId        String   @unique
+  heldAmount       Float
+  commissionAmount Float
+  freightAmount    Float
+  supplierPayout   Float
+  status           EscrowStatus
+  heldAt           DateTime
+  releasedAt       DateTime?
+
+  payment Payment @relation(fields: [paymentId], references: [id])
+}
+
+model Delivery {
+  id            String   @id @default(uuid())
+  orderId       String   @unique
+  driverId      String
+  truckId       String
+  assignedAt    DateTime
+  acceptedAt    DateTime?
+  pickupAt      DateTime?
+  deliveredAt   DateTime?
+  proofPhotoUrl String?
+  signatureUrl  String?
+  status        DeliveryStatus
+
+  order  Order         @relation(fields: [orderId], references: [id])
+  driver DriverProfile @relation(fields: [driverId], references: [id])
+  truck  Truck         @relation(fields: [truckId], references: [id])
+
+  gps GpsPoint[]
+}
+
+model GpsPoint {
+  id         BigInt   @id @default(autoincrement())
+  deliveryId String
+  location   Unsupported("point")
+  recordedAt DateTime
+
+  delivery Delivery @relation(fields: [deliveryId], references: [id])
+}
+
+model OrderStatusHistory {
+  id         String   @id @default(uuid())
+  orderId    String
+  fromStatus OrderStatus
+  toStatus   OrderStatus
+  actorId    String?
+  note       String?
+  createdAt  DateTime @default(now())
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  orderId    String
+  reviewerId String
+  supplierId String?
+  driverId   String?
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  order    Order @relation(fields: [orderId], references: [id])
+  reviewer User  @relation(fields: [reviewerId], references: [id])
+
+  supplier SupplierProfile? @relation("SupplierReviews", fields: [supplierId], references: [id])
+  driver   DriverProfile?   @relation("DriverReviews", fields: [driverId], references: [id])
+
+  @@unique([orderId, supplierId])
+  @@unique([orderId, driverId])
+}
+
+model Dispute {
+  id           String   @id @default(uuid())
+  orderId      String
+  raisedBy     String
+  resolvedBy   String?
+  description  String
+  evidenceUrls String[]
+  status       DisputeStatus
+  resolution   String?
+  resolvedAt   DateTime?
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  raisedByUser   User  @relation("DisputeRaisedBy", fields: [raisedBy], references: [id])
+  resolvedByUser User? @relation("DisputeResolvedBy", fields: [resolvedBy], references: [id])
+}
+
+model Invoice {
+  id            String   @id @default(uuid())
+  orderId       String   @unique
+  invoiceNumber String   @unique
+  pdfUrl        String
+  issuedAt      DateTime
+
+  order Order @relation(fields: [orderId], references: [id])
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  type        NotifType
+  channel     NotifChannel
+  title       String
+  body        String
+  referenceId String?
+  readAt      DateTime?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Document {
+  id         String   @id @default(uuid())
+  userId     String
+  truckId    String?
+  docType    DocType
+  url        String
+  verified   Boolean  @default(false)
+  verifiedBy String?
+  expiresAt  DateTime?
+
+  user  User  @relation(fields: [userId], references: [id])
+  truck Truck? @relation(fields: [truckId], references: [id])
+}
+
+model SystemConfig {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  description String?
+  updatedBy   String
+  updatedAt   DateTime @updatedAt
+
+  admin User @relation(fields: [updatedBy], references: [id])
+}
+
+model AuditLog {
+  id         BigInt   @id @default(autoincrement())
+  actorId    String?
+  actorRole  UserRole
+  action     String
+  entityType String
+  entityId   String
+  payload    Json
+  ipAddress  String
+  createdAt  DateTime @default(now())
+}

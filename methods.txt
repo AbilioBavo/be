@@ -1,0 +1,11 @@
+Users — GET|PATCH /users/*, POST /documents
+
+GET    /users/me                    → UserService.getProfile()          [CLIENT|SUPPLIER|DRIVER]
+PATCH  /users/me                    → UserService.updateProfile()       [CLIENT|SUPPLIER|DRIVER]
+POST   /documents                   → UserService.uploadDocument()      [SUPPLIER|DRIVER]
+GET    /documents                   → UserService.getDocuments()        [SUPPLIER|DRIVER]
+POST   /admin/users/:id/verify      → UserService.verifyUser()          [ADMIN]
+POST   /admin/users/:id/suspend     → UserService.suspendUser()         [ADMIN]
+
+
+
