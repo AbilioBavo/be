@@ -1,83 +1,103 @@
-export type CatalogProduct = {
+export interface CatalogProduct {
   id: string
-  name: string
   slug: string
+  name: string
   category: string
+  unitLabel: string
   price: number
-  oldPrice?: number
+  image: string
+  imageAlt?: string
+  gallery: string[]
   rating: number
   reviews: number
-  description: string
-  image: string
-  gallery: string[]
   stock: "Em stock" | "Poucas unidades"
+  description?: string
+  location?: string
+  delivery?: string
+  oldPrice?: number
   badge?: string
 }
 
 export const catalogProducts: CatalogProduct[] = [
   {
-    id: "p-01",
-    name: "Brinco Aurora Dourado",
-    slug: "brinco-aurora-dourado",
-    category: "Brincos",
-    price: 1899,
-    oldPrice: 2299,
-    rating: 4.9,
-    reviews: 124,
-    description: "Par premium com banho de ouro 18k e fecho hipoalergénico.",
+    id: "1",
+    slug: "areia-media-lavada",
+    name: "Areia média lavada",
+    category: "Areia",
+    unitLabel: "m3",
+    price: 2350,
     image: "/orange_sand.jpg",
-    gallery: ["/orange_sand.jpg", "/white_sand.jpg", "/stones.jpg"],
+    imageAlt: "Areia média lavada para construção",
+    gallery: ["/orange_sand.jpg", "/white_sand.jpg", "/hero-canteiro.jpg"],
+    rating: 4.8,
+    reviews: 126,
     stock: "Em stock",
-    badge: "Best seller",
+    description: "Areia lavada com granulometria equilibrada para betão, reboco e alvenaria.",
+    location: "Maputo",
+    delivery: "Entrega em 24h",
+    oldPrice: 2550,
+    badge: "Mais pedido",
   },
   {
-    id: "p-02",
-    name: "Pulseira Signature",
-    slug: "pulseira-signature",
-    category: "Pulseiras",
-    price: 2450,
-    rating: 4.8,
-    reviews: 88,
-    description: "Pulseira elegante com acabamento polido e ajuste confortável.",
+    id: "2",
+    slug: "pedra-brita-3-4",
+    name: "Pedra brita 3/4",
+    category: "Brita",
+    unitLabel: "m3",
+    price: 2900,
     image: "/stones.jpg",
-    gallery: ["/stones.jpg", "/hero-canteiro.jpg", "/white_sand.jpg"],
-    stock: "Em stock",
-  },
-  {
-    id: "p-03",
-    name: "Colar Essence Minimal",
-    slug: "colar-essence-minimal",
-    category: "Colares",
-    price: 3290,
-    oldPrice: 3690,
+    imageAlt: "Pedra brita para concreto e fundações",
+    gallery: ["/stones.jpg", "/hero-canteiro.jpg", "/orange_sand.jpg"],
     rating: 4.7,
-    reviews: 51,
-    description: "Design fino para layering com brilho sofisticado.",
-    image: "/white_sand.jpg",
-    gallery: ["/white_sand.jpg", "/orange_sand.jpg", "/stones.jpg"],
-    stock: "Poucas unidades",
-    badge: "Edição limitada",
+    reviews: 88,
+    stock: "Em stock",
+    description: "Brita resistente e uniforme, ideal para lajes, pilares e fundações.",
+    location: "Matola",
+    delivery: "Entrega em 24h",
   },
   {
-    id: "p-04",
-    name: "Anel Luna",
-    slug: "anel-luna",
-    category: "Anéis",
-    price: 1590,
-    rating: 4.8,
-    reviews: 73,
-    description: "Anel versátil para uso diário com toque luxuoso.",
+    id: "3",
+    slug: "bloco-de-cimento-15",
+    name: "Bloco de cimento 15",
+    category: "Blocos",
+    unitLabel: "un",
+    price: 45,
+    image: "/white_sand.jpg",
+    imageAlt: "Blocos e materiais de construção",
+    gallery: ["/white_sand.jpg", "/hero-canteiro.jpg", "/stones.jpg"],
+    rating: 4.5,
+    reviews: 54,
+    stock: "Poucas unidades",
+    description: "Bloco de 15 cm com boa regularidade dimensional para vedação e divisórias.",
+    location: "Boane",
+    delivery: "Entrega em 48h",
+    oldPrice: 50,
+    badge: "Stock limitado",
+  },
+  {
+    id: "4",
+    slug: "saibro-para-compactacao",
+    name: "Saibro para compactacao",
+    category: "Aterro",
+    unitLabel: "m3",
+    price: 1800,
     image: "/hero-canteiro.jpg",
+    imageAlt: "Saibro para nivelamento e compactação",
     gallery: ["/hero-canteiro.jpg", "/orange_sand.jpg", "/white_sand.jpg"],
+    rating: 4.6,
+    reviews: 39,
     stock: "Em stock",
+    description: "Saibro selecionado para nivelamento, aterro e preparação de base.",
+    location: "Maputo",
+    delivery: "Entrega em 24h",
   },
 ]
 
-export const categories = ["Todos", "Brincos", "Pulseiras", "Colares", "Anéis"]
+export const categories = ["Todos", "Areia", "Brita", "Blocos", "Aterro"]
 
 export const mockUser = {
-  name: "Cigarre Cliente",
-  email: "cliente@cigarre.mz",
+  name: "BuildEasy Cliente",
+  email: "cliente@buildeasy.mz",
   phone: "+258 84 000 0000",
   city: "Maputo",
 }

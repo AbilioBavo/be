@@ -119,11 +119,26 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+    background-image:
+      radial-gradient(circle at top, color-mix(in oklab, var(--color-primary) 9%, transparent), transparent 34%),
+      linear-gradient(180deg, color-mix(in oklab, var(--color-background) 96%, white 4%), var(--color-background));
+    min-height: 100svh;
+  }
   html {
     @apply font-sans;
-    }
+  }
 }
+
+@layer utilities {
+  .page-shell {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--color-border) 40%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--color-border) 38%, transparent) 1px, transparent 1px);
+    background-position: center top;
+    background-size: 72px 72px;
+  }
+}
+
