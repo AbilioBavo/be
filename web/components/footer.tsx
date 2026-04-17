@@ -21,9 +21,9 @@ const footerLinks = {
   empresa: {
     title: "Empresa",
     links: [
-      { label: "Sobre nós", href: "/sobre" },
-      { label: "Carreiras", href: "/carreiras" },
+      { label: "Empresas", href: "/empresas" },
       { label: "Notícias", href: "/noticias" },
+      { label: "Termos de uso", href: "/termos" },
     ],
   },
   contacto: {

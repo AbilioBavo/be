@@ -29,6 +29,8 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { formatMT } from "@/lib/mock-commerce";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
+import { api } from "@/lib/api";
 
 // Breadcrumbs
 const Breadcrumbs = () => (
@@ -61,6 +63,7 @@ const DELIVERY_OPTIONS = [
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState("mpesa");
@@ -79,6 +82,7 @@ export default function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState("");
 
   const shipping = DELIVERY_OPTIONS.find(o => o.value === selectedDelivery)?.price || 250;
   const total = subtotal + shipping - discount;
@@ -129,16 +133,23 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
     if (!validateStep()) return;
-    
+    if (!user) {
+      setSubmitError("Você precisa estar logado para finalizar o checkout.");
+      return;
+    }
+
     setIsLoading(true);
-    
-    // Simular processamento
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await api.checkout(user.id);
       clearCart();
       router.push("/obrigado");
-    }, 2000);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Falha ao finalizar pedido.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (items.length === 0) {
@@ -184,7 +195,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6 md:py-10">
+      <section className="mx-auto w-full max-w-7xl px-4 py-6 md:px-6 md:py-10">
         {/* Steps */}
         <div className="mb-8 flex items-center justify-center">
           <div className="flex items-center gap-2 sm:gap-4">
@@ -217,12 +228,13 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr]">
+        <div className="grid gap-6 lg:grid-cols-[1.25fr_1fr]">
           {/* Formulário */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            {submitError ? <p className="text-sm text-red-400">{submitError}</p> : null}
             {/* Step 1 - Informações Pessoais */}
             <div className={cn(
-              "border border-white/10 bg-[#0d1117] p-6 transition-all",
+              "border border-white/10 bg-[#0d1117] p-4 sm:p-6 transition-all",
               currentStep === 1 ? "opacity-100" : "opacity-60"
             )}>
               <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
@@ -317,7 +329,7 @@ export default function CheckoutPage() {
 
             {/* Step 2 - Entrega */}
             <div className={cn(
-              "border border-white/10 bg-[#0d1117] p-6 transition-all",
+              "border border-white/10 bg-[#0d1117] p-4 sm:p-6 transition-all",
               currentStep === 2 ? "opacity-100" : "opacity-60"
             )}>
               <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
@@ -449,7 +461,7 @@ export default function CheckoutPage() {
 
             {/* Step 3 - Pagamento */}
             <div className={cn(
-              "border border-white/10 bg-[#0d1117] p-6 transition-all",
+              "border border-white/10 bg-[#0d1117] p-4 sm:p-6 transition-all",
               currentStep === 3 ? "opacity-100" : "opacity-60"
             )}>
               <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
