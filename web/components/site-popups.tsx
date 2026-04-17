@@ -19,6 +19,11 @@ export function SitePopups() {
     setShowCookies(false)
   }
 
+  const rejectCookies = () => {
+    localStorage.setItem(COOKIE_KEY, "rejected")
+    setShowCookies(false)
+  }
+
   const closeNewsletter = () => {
     localStorage.setItem(NEWSLETTER_KEY, "closed")
     setShowNewsletter(false)
@@ -77,9 +82,14 @@ export function SitePopups() {
           <p className="mt-1 text-xs text-white/60">
             Utilizamos cookies para melhorar a navegação, personalizar ofertas e medir desempenho.
           </p>
-          <Button className="mt-3 h-9 bg-[#d4541a] hover:bg-[#e05e1e]" onClick={acceptCookies}>
-            Aceitar cookies
-          </Button>
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <Button variant="outline" className="h-9 border-white/20 bg-transparent text-white hover:bg-white/10" onClick={rejectCookies}>
+              Rejeitar
+            </Button>
+            <Button className="h-9 bg-[#d4541a] hover:bg-[#e05e1e]" onClick={acceptCookies}>
+              Aceitar
+            </Button>
+          </div>
         </div>
       )}
     </>

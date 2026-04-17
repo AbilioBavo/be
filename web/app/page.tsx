@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils"
 import { Footer } from "@/components/footer"
 import { ProductCard } from "@/components/product-card"
 import { catalogProducts } from "@/lib/mock-commerce"
+import { mockCompanies } from "@/lib/mock-backend"
 
 const heroMetrics = [
   { value: "120+", label: "fornecedores verificados" },
@@ -170,23 +171,26 @@ export default function HomePage() {
       </div>
 
       {/* Grid de produtos */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
-        {catalogProducts.slice(0, 3).map((product) => (
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 ">
+        {catalogProducts.slice(0, 4).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </section>
 
       <section className="mx-auto w-full max-w-7xl px-4 pb-8 md:px-6 lg:pb-12">
-        <div className="grid gap-6 md:grid-cols-3">
-          {[
-            { t: "Empresas parceiras", d: "Fornecedores auditados com SLA de entrega e qualidade.", href: "/empresas" },
-            { t: "Notícias do setor", d: "Tendências de custos, abastecimento e planejamento de obra.", href: "/noticias" },
-            { t: "Compra empresarial", d: "Condições especiais para empresas e grandes volumes.", href: "/cadastro" },
-          ].map((card) => (
-            <Link key={card.t} href={card.href} className="border border-white/10 bg-[#0d1117] p-6 transition hover:border-[#d4541a]/40">
-              <p className="text-lg font-semibold text-white">{card.t}</p>
-              <p className="mt-2 text-sm text-white/60">{card.d}</p>
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Empresas</p>
+            <h2 className="mt-2 text-3xl font-bold text-white">Empresas em destaque</h2>
+          </div>
+          <Link href="/empresas" className="text-sm text-[#d4541a] hover:text-[#e05e1e]">Ver todas</Link>
+        </div>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {mockCompanies.slice(0, 4).map((company) => (
+            <Link key={company.id} href={`/empresas/${company.id}`} className="border border-white/10 bg-[#0d1117] p-4 transition hover:border-[#d4541a]/40">
+              <p className="text-sm font-semibold text-white sm:text-base">{company.name}</p>
+              <p className="mt-2 line-clamp-3 text-xs text-white/60 sm:text-sm">{company.shortDescription}</p>
             </Link>
           ))}
         </div>

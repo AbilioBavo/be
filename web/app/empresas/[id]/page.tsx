@@ -1,4 +1,6 @@
 import Image from "next/image"
+import Link from "next/link"
+import { ChevronRight } from "lucide-react"
 import { notFound } from "next/navigation"
 
 import { Footer } from "@/components/footer"
@@ -19,6 +21,16 @@ export default async function CompanyDetailsPage({ params }: { params: Promise<{
   return (
     <main className="min-h-svh bg-[#0a0a0a] text-white">
       <Header />
+
+      <div className="border-b border-white/10 bg-[#0d1117]/40">
+        <div className="mx-auto flex w-full max-w-7xl items-center gap-1.5 px-4 py-3 text-xs text-white/60 md:px-6">
+          <Link href="/" className="hover:text-white">Início</Link>
+          <ChevronRight className="size-3" />
+          <Link href="/empresas" className="hover:text-white">Empresas</Link>
+          <ChevronRight className="size-3" />
+          <span className="text-white/85">{company.name}</span>
+        </div>
+      </div>
 
       <section className="mx-auto w-full max-w-7xl px-4 py-14 md:px-6">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr]">
