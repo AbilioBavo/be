@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,16 +25,25 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState("");
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
+    if (!email.trim()) return setError("Informe o email para continuar.");
+    if (!password.trim()) return setError("Informe a senha para continuar.");
+
     setIsLoading(true);
-    
-    // Simular login
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await login({ email, password });
       router.push("/");
-    }, 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Falha ao autenticar.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -149,6 +158,8 @@ export default function LoginPage() {
                   <span className="text-xs text-white/60">Lembrar-me</span>
                 </label>
               </div>
+
+              {error && <p className="text-xs text-red-400">{error}</p>}
 
               {/* Botão */}
               <Button
@@ -287,8 +298,8 @@ export default function LoginPage() {
           {/* Depoimento */}
           <div className="max-w-md border-l-2 border-[#d4541a] pl-4">
             <p className="text-sm italic text-white/60">
-              "A BuildEasy transformou a forma como compramos materiais. 
-              Entrega rápida e preços justos."
+              &ldquo;A BuildEasy transformou a forma como compramos materiais.
+              Entrega rápida e preços justos.&rdquo;
             </p>
             <p className="mt-2 text-xs font-medium text-white/80">
               — Carlos M., Construtor

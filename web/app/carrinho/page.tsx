@@ -21,7 +21,6 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { formatMT } from "@/lib/mock-commerce";
-import { cn } from "@/lib/utils";
 
 // Breadcrumbs
 const Breadcrumbs = () => (
