@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   User,
@@ -20,7 +19,6 @@ import {
   Truck,
   XCircle,
   Eye,
-  Download,
   HelpCircle,
   Shield,
   Mail,
@@ -31,7 +29,6 @@ import {
   AlertCircle,
   Navigation,
   PackageCheck,
-  Store,
   MapPinned,
 } from "lucide-react";
 
@@ -41,6 +38,8 @@ import { Button } from "@/components/ui/button";
 import { mockUser } from "@/lib/mock-commerce";
 import { cn } from "@/lib/utils";
 import { formatMT } from "@/lib/mock-commerce";
+import { useAuth } from "@/hooks/use-auth";
+import { useRouter } from "next/navigation";
 
 // Mock de pedidos
 const mockOrders = [
@@ -109,14 +108,16 @@ const menuItems = [
 ];
 
 export default function ProfilePage() {
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("orders");
   const [isEditing, setIsEditing] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<string | null>("PED-2025-002");
   const [formData, setFormData] = useState({
-    name: mockUser.name,
-    email: mockUser.email,
-    phone: mockUser.phone,
-    city: mockUser.city,
+    name: user?.name ?? mockUser.name,
+    email: user?.email ?? mockUser.email,
+    phone: user?.phone ?? mockUser.phone,
+    city: user?.city ?? mockUser.city,
     address: "Av. 24 de Julho, 1500",
   });
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -143,6 +144,18 @@ export default function ProfilePage() {
   };
 
   const activeTrackingOrder = mockOrders.find(o => o.id === selectedOrder && o.tracking);
+  if (!user) {
+    return (
+      <main className="min-h-svh bg-[#0a0a0a] text-white">
+        <Header />
+        <section className="mx-auto max-w-3xl px-6 py-20 text-center">
+          <h1 className="text-3xl font-bold">Faça login para ver seu perfil</h1>
+          <p className="mt-3 text-white/60">Por segurança, os dados do perfil e pedidos são exibidos apenas para usuários autenticados.</p>
+          <Button asChild className="mt-6 bg-[#d4541a] hover:bg-[#e05e1e]"><Link href="/login">Ir para login</Link></Button>
+        </section>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-svh bg-[#0a0a0a] text-white">
@@ -215,7 +228,7 @@ export default function ProfilePage() {
 
               <div className="my-2 h-px bg-white/10" />
 
-              <button className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition-all hover:bg-red-500/10">
+              <button className="flex w-full items-center gap-3 px-4 py-3 text-sm text-red-400 transition-all hover:bg-red-500/10" onClick={() => { logout(); router.push("/login"); }}>
                 <LogOut className="size-4" />
                 Sair da conta
               </button>

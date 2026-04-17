@@ -2,9 +2,6 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowUpRight,
-  BadgeCheck,
-  Clock3,
-  Filter,
   MapPin,
   Repeat,
   Search,
@@ -24,47 +21,6 @@ const heroMetrics = [
   { value: "120+", label: "fornecedores verificados" },
   { value: "24h", label: "janela média de entrega" },
   { value: "98%", label: "pedidos acompanhados ao vivo" },
-]
-
-const heroHighlights = [
-  "Cotação rápida para obras residenciais e comerciais",
-  "Entrega coordenada por bairro, distrito e província",
-  "Confirmação imediata via M-Pesa, cartão ou transferência",
-]
-
-const platformFeatures = [
-  {
-    title: "Pesquisa e filtra produtos",
-    description:
-      "Encontre materiais por categoria, preço, localização e prazo de entrega.",
-    icon: Search,
-  },
-  {
-    title: "Faz encomendas com entrega",
-    description:
-      "Crie pedidos em poucos passos com cálculo de frete por bairro e província.",
-    icon: Truck,
-  },
-  {
-    title: "Rastreia o caminhão ao vivo",
-    description: "Acompanhe o camião em tempo real com atualização contínua no mapa.",
-    icon: MapPin,
-  },
-  {
-    title: "Paga via M-Pesa / cartão",
-    description: "Checkout com opções locais e confirmação imediata de pagamento.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Avalia fornecedor e motorista",
-    description: "Depois da entrega, classifique o serviço e veja feedback de outros clientes.",
-    icon: Star,
-  },
-  {
-    title: "Repete pedidos anteriores",
-    description: "Reutilize encomendas frequentes com um clique e acelere as compras da obra.",
-    icon: Repeat,
-  },
 ]
 
 export default function HomePage() {
@@ -221,6 +177,20 @@ export default function HomePage() {
       </div>
     </section>
 
+      <section className="mx-auto w-full max-w-7xl px-4 pb-8 md:px-6 lg:pb-12">
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            { t: "Empresas parceiras", d: "Fornecedores auditados com SLA de entrega e qualidade.", href: "/empresas" },
+            { t: "Notícias do setor", d: "Tendências de custos, abastecimento e planejamento de obra.", href: "/noticias" },
+            { t: "Compra empresarial", d: "Condições especiais para empresas e grandes volumes.", href: "/cadastro" },
+          ].map((card) => (
+            <Link key={card.t} href={card.href} className="border border-white/10 bg-[#0d1117] p-6 transition hover:border-[#d4541a]/40">
+              <p className="text-lg font-semibold text-white">{card.t}</p>
+              <p className="mt-2 text-sm text-white/60">{card.d}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <Footer />
     </main>

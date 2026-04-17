@@ -29,6 +29,8 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/use-cart";
 import { formatMT } from "@/lib/mock-commerce";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
+import { api } from "@/lib/api";
 
 // Breadcrumbs
 const Breadcrumbs = () => (
@@ -61,6 +63,7 @@ const DELIVERY_OPTIONS = [
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, clearCart } = useCart();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPayment, setSelectedPayment] = useState("mpesa");
@@ -79,6 +82,7 @@ export default function CheckoutPage() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState("");
 
   const shipping = DELIVERY_OPTIONS.find(o => o.value === selectedDelivery)?.price || 250;
   const total = subtotal + shipping - discount;
@@ -129,16 +133,23 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
     if (!validateStep()) return;
-    
+    if (!user) {
+      setSubmitError("Você precisa estar logado para finalizar o checkout.");
+      return;
+    }
+
     setIsLoading(true);
-    
-    // Simular processamento
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await api.checkout(user.id);
       clearCart();
       router.push("/obrigado");
-    }, 2000);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Falha ao finalizar pedido.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (items.length === 0) {
@@ -220,6 +231,7 @@ export default function CheckoutPage() {
         <div className="grid gap-8 lg:grid-cols-[1.25fr_1fr]">
           {/* Formulário */}
           <form onSubmit={handleSubmit} className="space-y-6">
+            {submitError ? <p className="text-sm text-red-400">{submitError}</p> : null}
             {/* Step 1 - Informações Pessoais */}
             <div className={cn(
               "border border-white/10 bg-[#0d1117] p-6 transition-all",

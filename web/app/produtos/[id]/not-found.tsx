@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -20,18 +20,11 @@ import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { catalogProducts, categories } from "@/lib/mock-commerce";
 import { ProductCard } from "@/components/product-card";
-import { cn } from "@/lib/utils";
 
 export default function ProductNotFound() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestedProducts, setSuggestedProducts] = useState<typeof catalogProducts>([]);
-
-  useEffect(() => {
-    // Selecionar produtos aleatórios para sugestão
-    const shuffled = [...catalogProducts].sort(() => 0.5 - Math.random());
-    setSuggestedProducts(shuffled.slice(0, 4));
-  }, []);
+  const suggestedProducts = catalogProducts.slice(0, 4);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

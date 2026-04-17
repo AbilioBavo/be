@@ -22,6 +22,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 const ACCOUNT_TYPES = [
   { value: "personal", label: "Pessoa Física", icon: User },
@@ -49,6 +50,8 @@ export default function SignupPage() {
 
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [acceptNewsletter, setAcceptNewsletter] = useState(true);
+  const [error, setError] = useState("");
+  const { register } = useAuth();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -56,19 +59,32 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setError("");
+
     if (step === 1) {
+      if (!formData.email.includes("@")) return setError("Informe um email válido.");
+      if (formData.password.length < 6) return setError("A senha deve ter ao menos 6 caracteres.");
       setStep(2);
       return;
     }
-    
+
+    if (!acceptTerms) return setError("Você precisa aceitar os Termos de Uso para continuar.");
+
     setIsLoading(true);
-    
-    // Simular cadastro
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await register({
+        name: accountType === "business" ? formData.companyName : formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        city: formData.city,
+      });
       router.push("/");
-    }, 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao criar conta.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const passwordStrength = () => {
@@ -163,6 +179,7 @@ export default function SignupPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {error ? <p className="text-xs text-red-400">{error}</p> : null}
               {step === 1 ? (
                 <>
                   {/* Tipo de conta */}
@@ -470,8 +487,8 @@ export default function SignupPage() {
 
           <div className="border-l-2 border-[#d4541a] pl-4">
             <p className="text-sm italic text-white/60">
-              "Cadastro simples e rápido. Já fiz várias compras 
-              e sempre fui bem atendido."
+              &ldquo;Cadastro simples e rápido. Já fiz várias compras
+              e sempre fui bem atendido.&rdquo;
             </p>
             <p className="mt-2 text-xs font-medium text-white/80">
               — João S., Cliente desde 2025
