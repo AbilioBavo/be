@@ -2,12 +2,6 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowUpRight,
-  MapPin,
-  Repeat,
-  Search,
-  ShieldCheck,
-  Star,
-  Truck,
 } from "lucide-react"
 
 import { Header } from "@/components/header"
@@ -188,10 +182,16 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {mockCompanies.slice(0, 4).map((company) => (
-            <Link key={company.id} href={`/empresas/${company.id}`} className="border border-white/10 bg-[#0d1117] p-4 transition hover:border-[#d4541a]/40">
-              <p className="text-sm font-semibold text-white sm:text-base">{company.name}</p>
-              <p className="mt-2 line-clamp-3 text-xs text-white/60 sm:text-sm">{company.shortDescription}</p>
-            </Link>
+            <article key={company.id} className="overflow-hidden border border-white/10 bg-[#0d1117]">
+              <div className="relative h-36 w-full sm:h-44">
+                <Image src={company.image} alt={company.name} fill className="object-cover" />
+              </div>
+              <div className="space-y-2 p-4">
+                <p className="text-sm font-semibold text-white sm:text-base">{company.name}</p>
+                <p className="line-clamp-3 text-xs text-white/60 sm:text-sm">{company.shortDescription}</p>
+                <Link href={`/empresas/${company.id}`} className="inline-block text-xs text-[#d4541a] hover:text-[#e05e1e] sm:text-sm">Ver detalhes</Link>
+              </div>
+            </article>
           ))}
         </div>
       </section>
