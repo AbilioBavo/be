@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowUpRight, Box, Star, TrendingUp, Truck } from "lucide-react";
 import { useState } from "react";
 
-import type { CatalogProduct } from "@/lib/mock-commerce";
+import type { CatalogProduct } from "@/lib/types";
 import { formatMT } from "@/lib/mock-commerce";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
     addItem({
       id: product.id,
       name: product.name,
-      image: product.image,
+      imageSrc: product.image,
       price: product.price,
       unitLabel: product.unitLabel,
     });
@@ -104,7 +104,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
                 </span>
               </div>
             )}
-            {product.stock === "Em estoque" && (
+            {product.stock === "Em stock" && (
               <div className="flex items-center gap-1.5 bg-black/80 backdrop-blur-sm border border-white/10 px-2.5 py-1">
                 <Truck className="size-3 text-green-400" />
                 <span className="text-[10px] font-medium uppercase tracking-wider text-white/80">
@@ -122,6 +122,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
               <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/60">
                 {product.category}
               </span>
+              <span className="text-[10px] text-white/45">Fornecedor: {product.supplierName}</span>
             </div>
             
             {/* Nome do produto */}

@@ -181,6 +181,7 @@ export default function ProductPage() {
               <h1 className="text-3xl font-bold tracking-tight text-white lg:text-4xl">
                 {product.name}
               </h1>
+              <p className="mt-2 text-sm text-white/55">Fornecedor: {product.supplierName}</p>
 
               {/* Avaliação rápida */}
               <div className="mt-3 flex items-center gap-4">
@@ -343,7 +344,7 @@ export default function ProductPage() {
                     <span className="text-sm text-green-400">{product.stock}</span>
                   </div>
                 </div>
-                <p className="text-white/60">{product.longDescription || product.description}</p>
+                <p className="text-white/60">{product.description}</p>
               </div>
             )}
 

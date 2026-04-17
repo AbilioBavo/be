@@ -2,9 +2,6 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ArrowUpRight,
-  BadgeCheck,
-  Clock3,
-  Filter,
   MapPin,
   Repeat,
   Search,
@@ -19,52 +16,12 @@ import { cn } from "@/lib/utils"
 import { Footer } from "@/components/footer"
 import { ProductCard } from "@/components/product-card"
 import { catalogProducts } from "@/lib/mock-commerce"
+import { mockCompanies } from "@/lib/mock-backend"
 
 const heroMetrics = [
   { value: "120+", label: "fornecedores verificados" },
   { value: "24h", label: "janela média de entrega" },
   { value: "98%", label: "pedidos acompanhados ao vivo" },
-]
-
-const heroHighlights = [
-  "Cotação rápida para obras residenciais e comerciais",
-  "Entrega coordenada por bairro, distrito e província",
-  "Confirmação imediata via M-Pesa, cartão ou transferência",
-]
-
-const platformFeatures = [
-  {
-    title: "Pesquisa e filtra produtos",
-    description:
-      "Encontre materiais por categoria, preço, localização e prazo de entrega.",
-    icon: Search,
-  },
-  {
-    title: "Faz encomendas com entrega",
-    description:
-      "Crie pedidos em poucos passos com cálculo de frete por bairro e província.",
-    icon: Truck,
-  },
-  {
-    title: "Rastreia o caminhão ao vivo",
-    description: "Acompanhe o camião em tempo real com atualização contínua no mapa.",
-    icon: MapPin,
-  },
-  {
-    title: "Paga via M-Pesa / cartão",
-    description: "Checkout com opções locais e confirmação imediata de pagamento.",
-    icon: ShieldCheck,
-  },
-  {
-    title: "Avalia fornecedor e motorista",
-    description: "Depois da entrega, classifique o serviço e veja feedback de outros clientes.",
-    icon: Star,
-  },
-  {
-    title: "Repete pedidos anteriores",
-    description: "Reutilize encomendas frequentes com um clique e acelere as compras da obra.",
-    icon: Repeat,
-  },
 ]
 
 export default function HomePage() {
@@ -214,13 +171,30 @@ export default function HomePage() {
       </div>
 
       {/* Grid de produtos */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
-        {catalogProducts.slice(0, 3).map((product) => (
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 ">
+        {catalogProducts.slice(0, 4).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
     </section>
 
+      <section className="mx-auto w-full max-w-7xl px-4 pb-8 md:px-6 lg:pb-12">
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/50">Empresas</p>
+            <h2 className="mt-2 text-3xl font-bold text-white">Empresas em destaque</h2>
+          </div>
+          <Link href="/empresas" className="text-sm text-[#d4541a] hover:text-[#e05e1e]">Ver todas</Link>
+        </div>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          {mockCompanies.slice(0, 4).map((company) => (
+            <Link key={company.id} href={`/empresas/${company.id}`} className="border border-white/10 bg-[#0d1117] p-4 transition hover:border-[#d4541a]/40">
+              <p className="text-sm font-semibold text-white sm:text-base">{company.name}</p>
+              <p className="mt-2 line-clamp-3 text-xs text-white/60 sm:text-sm">{company.shortDescription}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <Footer />
     </main>

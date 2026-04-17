@@ -4,6 +4,8 @@ import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CartProvider } from "@/hooks/use-cart";
+import { AuthProvider } from "@/hooks/use-auth";
+import { SitePopups } from "@/components/site-popups";
 import { cn } from "@/lib/utils";
 
 // Configuração das fontes
@@ -172,7 +174,8 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <CartProvider>
+          <AuthProvider>
+            <CartProvider>
             {/* Skip to content link para acessibilidade */}
             <a
               href="#main-content"
@@ -182,7 +185,9 @@ export default function RootLayout({
             </a>
             
             <main id="main-content">{children}</main>
+            <SitePopups />
           </CartProvider>
+        </AuthProvider>
         </ThemeProvider>
         
         {/* Script para análise (opcional) */}
