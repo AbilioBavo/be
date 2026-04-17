@@ -24,6 +24,11 @@ export function SitePopups() {
     setShowNewsletter(false)
   }
 
+  const rejectNewsletter = () => {
+    localStorage.setItem(NEWSLETTER_KEY, "rejected")
+    setShowNewsletter(false)
+  }
+
   const submitNewsletter = () => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setMessage("Informe um email válido para receber novidades.")
@@ -54,9 +59,14 @@ export function SitePopups() {
               className="mt-4 h-11 w-full border border-white/20 bg-white/5 px-3 text-sm outline-none focus:border-[#d4541a]"
             />
             {message ? <p className="mt-2 text-xs text-white/70">{message}</p> : null}
-            <Button className="mt-4 w-full bg-[#d4541a] hover:bg-[#e05e1e]" onClick={submitNewsletter}>
-              Quero receber novidades
-            </Button>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Button variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10" onClick={rejectNewsletter}>
+                Rejeitar
+              </Button>
+              <Button className="bg-[#d4541a] hover:bg-[#e05e1e]" onClick={submitNewsletter}>
+                Aceitar
+              </Button>
+            </div>
           </div>
         </div>
       )}

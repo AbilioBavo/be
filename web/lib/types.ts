@@ -21,6 +21,18 @@ export interface CatalogProduct {
   badge?: string
 }
 
+export interface Company {
+  id: string
+  name: string
+  shortDescription: string
+  longDescription: string
+  clientCount: number
+  image: string
+  gallery: string[]
+  city: string
+  yearsInMarket: number
+}
+
 export interface Address {
   id: string
   label: string

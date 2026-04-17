@@ -1,5 +1,5 @@
 import { mockBackend } from "@/lib/mock-backend"
-import type { AuthUser, CatalogProduct, LoginPayload, Order, RegisterPayload, UserProfile } from "@/lib/types"
+import type { AuthUser, CatalogProduct, Company, LoginPayload, Order, RegisterPayload, UserProfile } from "@/lib/types"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "mock://local"
 
@@ -11,6 +11,10 @@ export const endpoints = {
   },
   products: {
     list: "/products",
+  },
+  companies: {
+    list: "/companies",
+    details: "/companies/details",
   },
   orders: {
     list: "/orders",
@@ -31,6 +35,10 @@ async function mockRouter<T>(url: string, options: ApiOptions): Promise<T> {
       return (await mockBackend.getProducts()) as T
     case endpoints.auth.login:
       return (await mockBackend.login(body as LoginPayload)) as T
+    case endpoints.companies.list:
+      return (await mockBackend.getCompanies()) as T
+    case endpoints.companies.details:
+      return (await mockBackend.getCompanyById(body.companyId)) as T
     case endpoints.auth.register:
       return (await mockBackend.register(body as RegisterPayload)) as T
     case endpoints.auth.profile:
@@ -71,6 +79,9 @@ export const api = {
   register: (payload: RegisterPayload) =>
     apiFetch<AuthUser>(endpoints.auth.register, { method: "POST", body: payload }),
   getProducts: () => apiFetch<CatalogProduct[]>(endpoints.products.list),
+  getCompanies: () => apiFetch<Company[]>(endpoints.companies.list),
+  getCompanyById: (companyId: string) =>
+    apiFetch<Company | null>(endpoints.companies.details, { method: "POST", body: { companyId } }),
   getProfile: (userId: string) =>
     apiFetch<UserProfile>(endpoints.auth.profile, { method: "POST", body: { userId } }),
   getOrders: (userId: string) =>

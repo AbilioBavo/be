@@ -1,6 +1,7 @@
 import type {
   AuthUser,
   CatalogProduct,
+  Company,
   LoginPayload,
   Order,
   RegisterPayload,
@@ -110,6 +111,58 @@ export const mockProducts: CatalogProduct[] = [
   },
 ]
 
+
+export const mockCompanies: Company[] = [
+  {
+    id: "c-1",
+    name: "Areias Matola, Lda",
+    shortDescription: "Areias selecionadas, lavadas e prontas para concreto e reboco.",
+    longDescription:
+      "A Areias Matola atua há mais de uma década no fornecimento de areia média, fina e lavada para obras residenciais, comerciais e industriais. Opera com controle de qualidade por lote, logística dedicada e atendimento B2B para obras de médio e grande porte.",
+    clientCount: 1240,
+    image: "/orange_sand.jpg",
+    gallery: ["/orange_sand.jpg", "/hero-canteiro.jpg", "/white_sand.jpg"],
+    city: "Matola",
+    yearsInMarket: 12,
+  },
+  {
+    id: "c-2",
+    name: "Mineração Sul",
+    shortDescription: "Brita graduada para fundações, lajes e pavimentação.",
+    longDescription:
+      "A Mineração Sul é especializada em brita 3/4, pó de pedra e agregados para concreto estrutural. Com frota própria e operação contínua, garante previsibilidade de entrega, rastreio de caminhões e suporte técnico para compras recorrentes.",
+    clientCount: 980,
+    image: "/stones.jpg",
+    gallery: ["/stones.jpg", "/hero-canteiro.jpg", "/orange_sand.jpg"],
+    city: "Boane",
+    yearsInMarket: 9,
+  },
+  {
+    id: "c-3",
+    name: "Blocos Centro",
+    shortDescription: "Blocos de cimento com padronização e alto rendimento na obra.",
+    longDescription:
+      "A Blocos Centro fornece blocos de vedação e estruturais para construtoras e revendedores. O foco está na regularidade dimensional, baixa perda em obra e capacidade de atendimento sob demanda para cronogramas apertados.",
+    clientCount: 730,
+    image: "/white_sand.jpg",
+    gallery: ["/white_sand.jpg", "/hero-canteiro.jpg", "/stones.jpg"],
+    city: "Maputo",
+    yearsInMarket: 7,
+  },
+  {
+    id: "c-4",
+    name: "Terra Forte Fornecimentos",
+    shortDescription: "Soluções para aterro, compactação e preparação de base.",
+    longDescription:
+      "A Terra Forte entrega saibro e materiais de base com foco em regularização de terreno, compactação e infraestrutura urbana. A empresa também presta orientação técnica para escolha do tipo de material por etapa da obra.",
+    clientCount: 560,
+    image: "/hero-canteiro.jpg",
+    gallery: ["/hero-canteiro.jpg", "/orange_sand.jpg", "/white_sand.jpg"],
+    city: "Maputo",
+    yearsInMarket: 6,
+  },
+]
+
 const userOrders: Record<string, Order[]> = {
   "u-1": [
     { id: "PED-2026-001", createdAt: "2026-04-10", status: "Entregue", total: 2850, itemsCount: 3 },
@@ -128,6 +181,8 @@ const fail = async (message: string) => {
 
 export const mockBackend = {
   getProducts: async () => simulate(mockProducts),
+  getCompanies: async () => simulate(mockCompanies),
+  getCompanyById: async (companyId: string) => simulate(mockCompanies.find((company) => company.id === companyId) ?? null),
   login: async ({ email, password }: LoginPayload): Promise<AuthUser> => {
     const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase())
     if (!user || user.password !== password) return fail("Email ou senha inválidos.")
